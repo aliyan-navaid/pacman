@@ -1,12 +1,16 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#define DEBUG
+
 #include <cstdint>
 #include <termios.h>
 #include <unistd.h>
 #include <fcntl.h>
 
 #include "map.h"
+#include "debug.h"
+
 
 #define X 0
 #define Y 1
@@ -34,14 +38,14 @@ void set_nonblocking_input(bool enable) {
 }
 
 player* get_player() {
-    static player player_ = []() {
-        player p;
-        p.position[X] = p.position[Y] = 1;
+    static player* player_ = []() {
+        player* p = new player;
+        p->position[X] = p->position[Y] = 1;
     
         return p;
     }();
 
-    return &player_;
+    return player_;
 }
 
 
@@ -76,7 +80,8 @@ int update_player(player* player_, map* map_) {
 }
 
 void destroy_player() {
-    delete get_player();
+    delete get_player();    
+    DEBUG_PRINT("Player Destroyed");
 }
 
 #endif /*PLAYER_H*/
