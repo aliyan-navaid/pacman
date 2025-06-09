@@ -23,9 +23,10 @@ int main() {
     
 
     /* GAME LOOP */
+    display_map(map, player);
     while(1) {
-        if ( update_player(player, map) )
-            display_map(map);
+        if ( update_player(player) )
+            display_map(map, player);
     }
 
     return EXIT_SUCCESS;

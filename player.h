@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#define DEBUG
+//#define DEBUG - Use compiler flag -D instead
 
 #include <cstdint>
 #include <termios.h>
@@ -11,12 +11,12 @@
 #include "map.h"
 #include "debug.h"
 
-
 #define X 0
 #define Y 1
 
 struct player {
     std::uint16_t position[2];
+    int symbol;
 };
 
 
@@ -41,7 +41,8 @@ player* get_player() {
     static player* player_ = []() {
         player* p = new player;
         p->position[X] = p->position[Y] = 1;
-    
+        p->symbol = 2;
+
         return p;
     }();
 
@@ -59,21 +60,20 @@ int read_input(player* player_) {
             player_->position[X] -= 1;
         }
         else if (key == 'w') {
-            player_->position[Y] += 1;
-        }
-        else if (key == 's') {
             player_->position[Y] -= 1;
         }
-        
+        else if (key == 's') {
+            player_->position[Y] += 1;
+        }
+
         return 1;
 
     }
     return 0;
 }
 
-int update_player(player* player_, map* map_) {
+int update_player(player* player_) {
     if ( read_input(player_) ) {
-        map_->data[player_->position[Y]][player_->position[X]] = '0';
         return 1;
     }
     return 0;
