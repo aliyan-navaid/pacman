@@ -37,10 +37,11 @@ void set_nonblocking_input(bool enable) {
     tcsetattr(STDIN_FILENO, TCSANOW, &termios_old);
 }
 
-player* get_player() {
-    static player* player_ = []() {
+player* get_player(int initial_x=1, int initial_y=1) {
+    static player* player_ = [&initial_x, &initial_y]() {
         player* p = new player;
-        p->position[X] = p->position[Y] = 1;
+        p->position[X] = initial_x; 
+        p->position[Y] = initial_y;
         p->symbol = 2;
 
         return p;
