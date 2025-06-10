@@ -10,9 +10,8 @@
 
 #include "map.h"
 #include "debug.h"
+#include "constants.h"
 
-#define X 0
-#define Y 1
 
 struct player {
     std::uint16_t position[2];
@@ -45,7 +44,7 @@ player* get_player(int initial_x=1, int initial_y=1) {
         p->symbol = 2;
 
         return p;
-    }();
+    }(); // () invokes λ immediately
 
     return player_;
 }
@@ -54,16 +53,16 @@ player* get_player(int initial_x=1, int initial_y=1) {
 int read_input(player* player_) {
     char key;
     if (read(STDIN_FILENO, &key, 1) >= 0 ) {        
-        if (key=='d') {
+        if (key=='d' && player_->position[X]<WIDTH-1) {
             player_->position[X] += 1;
         }
-        else if (key == 'a') {
+        else if (key == 'a'  && player_->position[X]>0) {
             player_->position[X] -= 1;
         }
-        else if (key == 'w') {
+        else if (key == 'w'  && player_->position[Y]>0) {
             player_->position[Y] -= 1;
         }
-        else if (key == 's') {
+        else if (key == 's' && player_->position[Y]<HEIGHT-1) {
             player_->position[Y] += 1;
         }
 

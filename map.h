@@ -8,16 +8,9 @@
 #include <unistd.h>
 
 #include "debug.h"
+#include "constants.h"
 #include "player.h"
 
-/* MAP DIMENSIONS */
-#define WIDTH 5
-#define HEIGHT 5
-
-/* BLOCKS */
-#define WALL 0
-#define WALKABLE 1
-#define PLAYER 2
 
 struct map {
     std::int16_t data[HEIGHT][WIDTH] = {0};
