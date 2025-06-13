@@ -5,10 +5,11 @@
 
 #include <iostream>
 #include <cstdint>
+#include <cstring>
 #include <unistd.h>
 
-#include "debug.h"
 #include "constants.h"
+#include "debug.h"
 #include "player.h"
 
 
@@ -69,7 +70,7 @@ void display_map(map* map_, player* player_) {
                 write( STDOUT_FILENO, decode_symbol(player_->symbol), 1 ); 
                 continue;   
             }
-            write( STDOUT_FILENO, decode_symbol(map_->data[i][j]), 1 );
+            write( STDOUT_FILENO, decode_symbol(map_->data[i][j]), strlen(decode_symbol(map_->data[i][j])) ) ;
         }
         write(STDOUT_FILENO, "\n", 1);
     }

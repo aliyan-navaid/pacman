@@ -20,7 +20,6 @@ int main() {
     signal(SIGSEGV, cleanup);  // Segmentation Violation
     
     set_nonblocking_input(true);
-    
 
     /* GAME LOOP */
     display_map(map, player);
@@ -28,6 +27,6 @@ int main() {
         if ( update_player(player) )
             display_map(map, player);
     }
-
+      
     return EXIT_SUCCESS;
 }

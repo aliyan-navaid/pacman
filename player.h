@@ -20,11 +20,16 @@ struct player {
 
 
 void set_nonblocking_input(bool enable) {
-    static termios termios_old, termios_new;
+    static termios termios_old = []() {
+        termios t;
+        tcgetattr(STDIN_FILENO, &t);
+        return t; 
+    }();
+
+    static termios termios_new;
+
     if (enable) {
-        tcgetattr(STDIN_FILENO, &termios_old);
         termios_new = termios_old;
-        termios_new.c_cflag;
 
         termios_new.c_lflag &= ~(ICANON | ECHO);
 
