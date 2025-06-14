@@ -19,6 +19,12 @@ struct player {
 };
 
 
+
+struct map;
+
+bool obstruction(std::uint16_t x, std::uint16_t y, map* map_);
+bool outofmap(std::uint16_t position, int axis);
+
 void set_nonblocking_input(bool enable) {
     static termios termios_old = []() {
         termios t;
@@ -54,31 +60,35 @@ player* get_player(int initial_x=1, int initial_y=1) {
     return player_;
 }
 
-
-int read_input(player* player_) {
+int read_input(player* player_, map* map_) {
     char key;
-    if (read(STDIN_FILENO, &key, 1) >= 0 ) {        
-        if (key=='d' && player_->position[X]<WIDTH-1) {
+    if (read(STDIN_FILENO, &key, 1) >= 0 ) {
+        int old_position[2] = {player_->position[X], player_->position[Y]};
+        if (key=='d') {
             player_->position[X] += 1;
         }
-        else if (key == 'a'  && player_->position[X]>0) {
+        else if (key == 'a') {
             player_->position[X] -= 1;
         }
-        else if (key == 'w'  && player_->position[Y]>0) {
+        else if (key == 'w') {
             player_->position[Y] -= 1;
         }
-        else if (key == 's' && player_->position[Y]<HEIGHT-1) {
+        else if (key == 's') {
             player_->position[Y] += 1;
         }
 
+        if (outofmap(player_->position[X], X) || outofmap(player_->position[Y], Y) || obstruction(player_->position[X], player_->position[Y], map_)) {
+            player_->position[X] = old_position[X]; player_->position[Y] = old_position[Y];
+        }
+            
         return 1;
 
     }
     return 0;
 }
 
-int update_player(player* player_) {
-    if ( read_input(player_) ) {
+int update_player(player* player_, map* map_) {
+    if ( read_input(player_, map_) ) {
         return 1;
     }
     return 0;

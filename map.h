@@ -19,7 +19,6 @@ struct map {
 
 
 void generate_map(map* map_) {
-/*
     for (int y = 0; y < HEIGHT; ++y) {
         for (int x = 0; x < WIDTH; ++x) {
             // Walls around border
@@ -34,7 +33,15 @@ void generate_map(map* map_) {
             }
         }
     }
-*/
+}
+
+bool outofmap(std::uint16_t position, int axis){
+    if (axis==X) return (position>WIDTH-1 || position<0 );
+    else return (position<0 || position>HEIGHT-1); 
+}
+
+bool obstruction(std::uint16_t x, std::uint16_t y, map* map_) {
+    return (map_->data[x][y] == WALL);
 }
 
 map* get_map() {
@@ -65,12 +72,12 @@ void display_map(map* map_, player* player_) {
     clear_screen();
     for (int i=0; i<HEIGHT; i++) {
         for (int j=0; j<WIDTH; j++) {
-            //std::cout << i << " " << j << " \n";
             if (player_->position[X]==j && player_->position[Y]==i) {
                 write( STDOUT_FILENO, decode_symbol(player_->symbol), 1 ); 
                 continue;   
             }
-            write( STDOUT_FILENO, decode_symbol(map_->data[i][j]), strlen(decode_symbol(map_->data[i][j])) ) ;
+            const char* symbol = decode_symbol(map_->data[i][j]);
+            write( STDOUT_FILENO, symbol, strlen(symbol) ) ;
         }
         write(STDOUT_FILENO, "\n", 1);
     }
@@ -80,6 +87,7 @@ void display_map(map* map_, player* player_) {
 void destroy_map() {
     delete get_map();
     DEBUG_PRINT("Map Destroyed");
+    
 }
 
 #endif /*MAP_H*/

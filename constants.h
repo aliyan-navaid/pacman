@@ -14,4 +14,8 @@
 #define X 0
 #define Y 1
 
+/* Cursor Settings*/
+#define CURSOR_HIDE "\e[?25l"
+#define CURSOR_UNHIDE "\e[?25h"
+
 #endif /* CONSTANTS_H */
