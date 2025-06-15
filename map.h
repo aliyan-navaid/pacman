@@ -1,7 +1,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-#define clear_screen() write(STDOUT_FILENO, "\033[2J\033[H", 7);
 
 #include <iostream>
 #include <cstdint>
@@ -10,7 +9,6 @@
 
 #include "constants.h"
 #include "debug.h"
-#include "player.h"
 
 
 struct map {
@@ -44,6 +42,10 @@ bool obstruction(std::uint16_t x, std::uint16_t y, map* map_) {
     return (map_->data[x][y] == WALL);
 }
 
+bool is_valid(int x, int y, map* map_) {
+    return !( outofmap(x, X) || outofmap(y, Y) || obstruction(x, y, map_) );
+}
+
 map* get_map() {
     static map* map_ = []() {
         map* m = new map;
@@ -53,6 +55,10 @@ map* get_map() {
     }();
 
     return map_;
+}
+
+void set_map(map* map_, int x, int y, int symbol) {
+    map_->data[x][y] = symbol;
 }
 
 const char* decode_symbol(std::uint16_t code) {
@@ -68,21 +74,15 @@ const char* decode_symbol(std::uint16_t code) {
     return NULL;
 }
 
-void display_map(map* map_, player* player_) {
-    clear_screen();
+void display_map(map* map_) {
     for (int i=0; i<HEIGHT; i++) {
         for (int j=0; j<WIDTH; j++) {
-            if (player_->position[X]==j && player_->position[Y]==i) {
-                write( STDOUT_FILENO, decode_symbol(player_->symbol), 1 ); 
-                continue;   
-            }
             const char* symbol = decode_symbol(map_->data[i][j]);
             write( STDOUT_FILENO, symbol, strlen(symbol) ) ;
         }
         write(STDOUT_FILENO, "\n", 1);
     }
 }
-
 
 void destroy_map() {
     delete get_map();
