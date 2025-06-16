@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <cstring>
 #include <unistd.h>
+#include <map>
 
 #include "constants.h"
 #include "debug.h"
@@ -13,6 +14,9 @@
 
 struct map {
     std::int16_t data[HEIGHT][WIDTH] = {0};
+    std::map< std::pair<int, int>, std::pair<int, int>> teleportations { 
+        {{1,3}, {3,1}}
+    };
 };
 
 
@@ -30,6 +34,7 @@ void generate_map(map* map_) {
                 map_->data[y][x] = WALKABLE;
             }
         }
+        map_->data[3][1] = TELEPORT;
     }
 }
 
@@ -44,6 +49,15 @@ bool obstruction(std::uint16_t x, std::uint16_t y, map* map_) {
 
 bool is_valid(int x, int y, map* map_) {
     return !( outofmap(x, X) || outofmap(y, Y) || obstruction(x, y, map_) );
+}
+
+bool is_teleport(int x, int y, map* map_) {
+    auto it = map_->teleportations.find({x, y});
+    return !(it==map_->teleportations.end());
+}
+
+std::pair<int, int> teleport_coordinates(int x, int y, map* map_) {
+    return map_->teleportations.find({x,y})->second;
 }
 
 map* get_map() {
@@ -70,6 +84,9 @@ const char* decode_symbol(std::uint16_t code) {
     }
     else if (code==PLAYER) {
         return "@";
+    }
+    else if (code==TELEPORT) {
+        return "0";
     }
     return NULL;
 }

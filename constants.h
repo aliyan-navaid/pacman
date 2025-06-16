@@ -9,6 +9,7 @@
 #define WALL 0
 #define WALKABLE 1
 #define PLAYER 2
+#define TELEPORT 3
 
 /* Player Position */
 #define X 0

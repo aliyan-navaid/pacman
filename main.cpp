@@ -60,6 +60,13 @@ int handle_input(map* map_, player* player_) {
         }
 
         if (is_valid(new_position[X], new_position[Y], map_)) {
+            if (is_teleport(new_position[X], new_position[Y], map_)) {
+                int temp_x = teleport_coordinates(new_position[X], new_position[Y], map_).first;
+                int temp_y = teleport_coordinates(new_position[X], new_position[Y], map_).second;
+
+                new_position[X] = temp_x;
+                new_position[Y] = temp_y;
+            }
             set_player(player_, new_position[X], new_position[Y]);
         }
         
