@@ -58,7 +58,7 @@ map* get_map() {
 }
 
 void set_map(map* map_, int x, int y, int symbol) {
-    map_->data[x][y] = symbol;
+    map_->data[y][x] = symbol;
 }
 
 const char* decode_symbol(std::uint16_t code) {

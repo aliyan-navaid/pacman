@@ -45,27 +45,26 @@ int handle_input(map* map_, player* player_) {
     if (read(STDIN_FILENO, &key, 1) >= 0 ) {
         map_->data[player_->position[Y]][player_->position[X]] = WALKABLE;
 
-        int old_position[2] = {player_->position[X], player_->position[Y]};
+        int new_position[2] = {player_->position[X], player_->position[Y]};
         if (key=='d') {
-            player_->position[X] += 1;
+            new_position[X] += 1;
         }
         else if (key == 'a') {
-            player_->position[X] -= 1;
+            new_position[X] -= 1;
         }
         else if (key == 'w') {
-            player_->position[Y] -= 1;
+            new_position[Y] -= 1;
         }
         else if (key == 's') {
-            player_->position[Y] += 1;
+            new_position[Y] += 1;
         }
 
-        if (!is_valid(player_->position[X], player_->position[Y], map_)) {
-            player_->position[X] = old_position[X];
-            player_->position[Y] = old_position[Y];
+        if (is_valid(new_position[X], new_position[Y], map_)) {
+            set_player(player_, new_position[X], new_position[Y]);
         }
-
-        map_->data[player_->position[Y]][player_->position[X]] = player_->symbol;
-            
+        
+        set_map(map_, player_->position[X], player_->position[Y], player_->symbol);
+        
         return 1;
 
     }
@@ -77,8 +76,15 @@ int main() {
     map* map = get_map();
     player* player = get_player();
 
-    signal(SIGINT, cleanup);  // CTRL+C
-    signal(SIGSEGV, cleanup);  // Segmentation Violation
+    struct sigaction sa;
+    sa.sa_handler = cleanup;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    
+    if ( sigaction(SIGINT, &sa, nullptr) < 0) { // CTRL+C
+        write(STDERR_FILENO, "Signal Handler Failed\n", 22);
+        return -1;
+    }  
     
     /* Set Terminal */    
     write( STDOUT_FILENO, CURSOR_HIDE, 6);
