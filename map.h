@@ -34,7 +34,9 @@ void generate_map(map* map_) {
                 map_->data[y][x] = WALKABLE;
             }
         }
-        map_->data[3][1] = TELEPORT;
+    }
+    for (auto itr=map_->teleportations.begin(); itr!=map_->teleportations.end(); itr++) {
+        map_->data[itr->first.second][itr->first.first] = TELEPORT;
     }
 }
 

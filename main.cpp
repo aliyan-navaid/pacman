@@ -40,42 +40,58 @@ void cleanup(int sig) {
     exit(0);
 }
 
-int handle_input(map* map_, player* player_) {
+char get_input() {
     char key;
-    if (read(STDIN_FILENO, &key, 1) >= 0 ) {
-        map_->data[player_->position[Y]][player_->position[X]] = WALKABLE;
+    if ( read(STDIN_FILENO, &key, 1) >= 0 )
+        return key;
+    return '.';
+}
 
-        int new_position[2] = {player_->position[X], player_->position[Y]};
+std::pair<int, int> new_coordinates(map* map_, player* player_, char key) {
+    
+    std::pair<int,int> new_position = {player_->position[Y], player_->position[X]};
         if (key=='d') {
-            new_position[X] += 1;
+            new_position.second += 1;
         }
         else if (key == 'a') {
-            new_position[X] -= 1;
+            new_position.second -= 1;
         }
         else if (key == 'w') {
-            new_position[Y] -= 1;
+            new_position.first -= 1;
         }
         else if (key == 's') {
-            new_position[Y] += 1;
+            new_position.first += 1;
         }
+    if ( map_->data[new_position.first][new_position.second] == TELEPORT ) {
+        int temp_x = teleport_coordinates(new_position.second, new_position.first, map_).first;
+        int temp_y = teleport_coordinates(new_position.second, new_position.first, map_).second;
+                
+        new_position.second = temp_x;
+        new_position.first = temp_y;
+    }
 
-        if (is_valid(new_position[X], new_position[Y], map_)) {
-            if (is_teleport(new_position[X], new_position[Y], map_)) {
-                int temp_x = teleport_coordinates(new_position[X], new_position[Y], map_).first;
-                int temp_y = teleport_coordinates(new_position[X], new_position[Y], map_).second;
+    return new_position;
+}
 
-                new_position[X] = temp_x;
-                new_position[Y] = temp_y;
-            }
-            set_player(player_, new_position[X], new_position[Y]);
+
+int handle_input(map* map_, player* player_) {
+        char key = get_input();
+        if (key=='.') return 0;
+
+        map_->data[player_->position[Y]][player_->position[X]] = WALKABLE;
+
+        std::pair<int, int> new_coordinate { new_coordinates(map_, player_, key).first, new_coordinates(map_, player_, key).second };
+        
+
+        if (is_valid(new_coordinate.second, new_coordinate.first, map_)) {
+            
+            set_player(player_, new_coordinate.second, new_coordinate.first);
         }
         
         set_map(map_, player_->position[X], player_->position[Y], player_->symbol);
         
         return 1;
 
-    }
-    return 0;
 }
 
 int main() {
